@@ -1,24 +1,27 @@
-import unittest
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
+import time
 
-class NonomTest(unittest.TestCase):
+class NomnomTest(LiveServerTestCase):
 
     def setUp(self):
-        caps = webdriver.DesiredCapabilities.FIREFOX
-        self.browser = webdriver.Remote(
-                command_executor='http://192.168.0.187:4444/wd/hub',
-                desired_capabilities=caps)
-        self.browser.implicitly_wait(3)
+        # caps = webdriver.DesiredCapabilities.FIREFOX
+        # self.browser = webdriver.Remote(
+        #         command_executor='http://192.168.0.187:4444/wd/hub',
+        #         desired_capabilities=caps)
+        # self.browser.implicitly_wait(3)
+		self.browser = webdriver.Firefox()
+		self.browser.implicitly_wait(3)
 
     def tearDown(self):
         self.browser.quit()
 
     # As an administrator, I can go to /admin/ so that I can login.
     def test_can_go_to_admin_url(self):
-        self.browser.get('http://localhost:8888/admin')
-        self.assertIn('Log in', self.browser.title)
+		self.browser.get(self.live_server_url + '/admin/')
+		self.assertIn('Log in', self.browser.title)
 
     # As an administrator, I can login so that I enter the admin site.
     def test_can_login_admin_site(self):
@@ -31,5 +34,11 @@ class NonomTest(unittest.TestCase):
     def test_can_access_nomnom(self):
         self.fail('TODO')
 
-if __name__ == '__main__':
-    unittest.main()
+class NomnomRemoteTest(NomnomTest):
+	
+	def setUp(self):
+		caps = webdriver.DesiredCapabilities.FIREFOX
+		self.browser = webdriver.Remote(
+			command_executor='http://192.168.0.187:4444/wd/hub',
+		    desired_capabilities=caps)
+		self.browser.implicitly_wait(3)
