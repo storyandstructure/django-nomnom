@@ -7,11 +7,6 @@ import time
 class NomnomTest(LiveServerTestCase):
 
     def setUp(self):
-        # caps = webdriver.DesiredCapabilities.FIREFOX
-        # self.browser = webdriver.Remote(
-        #         command_executor='http://192.168.0.187:4444/wd/hub',
-        #         desired_capabilities=caps)
-        # self.browser.implicitly_wait(3)
 		self.browser = webdriver.Firefox()
 		self.browser.implicitly_wait(3)
 
@@ -35,6 +30,8 @@ class NomnomTest(LiveServerTestCase):
         self.fail('TODO')
 
 class NomnomRemoteTest(NomnomTest):
+	
+	live_server_url = 'http://localhost:8888'
 	
 	def setUp(self):
 		caps = webdriver.DesiredCapabilities.FIREFOX
