@@ -1,0 +1,18 @@
+{% extends "admin/base_site.html" %}
+
+{% block extra_css %}
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
+    <![endif]-->
+{% endblock extra_css %}
+
+{% block title %}{% trans "Import data" %} {{ block.super }}{% endblock %}
+
+{% block page_title %}Import data{% endblock page_title %}
+
+{% block content %}
+    <p>This is the {{ page_title }} page</p>
+{% endblock content %}
+
+{% block extra_js %}
+{% endblock extra_js %}
