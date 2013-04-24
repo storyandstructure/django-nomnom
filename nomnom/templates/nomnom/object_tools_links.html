@@ -1,0 +1,12 @@
+{% load i18n %}
+
+<li>
+	<a href="#">
+		{% blocktrans with cl.opts.verbose_name_plural as name %}Import {{ name }}{% endblocktrans %}
+	</a>
+</li>
+<li>
+	<a href="#">
+		{% blocktrans with cl.opts.verbose_name_plural as name %}Export {{ name }}{% endblocktrans %}
+	</a>
+</li>
