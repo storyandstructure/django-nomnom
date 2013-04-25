@@ -1,12 +1,14 @@
+{% load url from future %}
 {% load i18n %}
 
+
 <li>
-	<a href="{% url 'import' %}">
+	<a href="{% url 'import_data' %}">
 		{% blocktrans with cl.opts.verbose_name_plural as name %}Import {{ name }}{% endblocktrans %}
 	</a>
 </li>
 <li>
-	<a href="{% url 'export' %}">
+	<a href="{% url 'export_data' %}">
 		{% blocktrans with cl.opts.verbose_name_plural as name %}Export {{ name }}{% endblocktrans %}
 	</a>
 </li>
