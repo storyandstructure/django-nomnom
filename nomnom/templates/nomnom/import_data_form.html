@@ -4,20 +4,32 @@
 
 {% block title %}{% trans "Import data" %} {{ block.super }}{% endblock title %}
 
+{% block extrahead %}
+  {{ block.super }}
+  {{ media }}
+{% endblock %}
+
+{% block extrastyle %}
+  {{ import_file_form.media }}
+  {{ block.super }}
+{% endblock %}
+
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
+{% block bodyclass %}change-form{% endblock %}
+
 {% block breadcrumbs %}{% if not is_popup %}
 <div class="breadcrumbs">
      <a href="{% url 'admin:index' %}">{% trans "Home" %}</a> &rsaquo;
-     <a href="#">{{ app|capfirst|escape }}</a> &rsaquo;
+     <a href="{% url 'admin:app_list' app_label=app %}">{{ app|capfirst|escape }}</a> &rsaquo;
      <a href="#">{{ model|capfirst|escape }}</a> &rsaquo;
      {% trans "Import data" %}
 </div>
 {% endif %}{% endblock breadcrumbs %}
 
 {% block content %}
-
 <h1>{% trans "Import" %} {{ model|capfirst }}</h1>
-<ul>
-    <li>To Do:</li>
-    <li>Upload CSV where fields match</li>
-</ul>
+    <form enctype="multipart/form-data" method="post">{% csrf_token %}
+        <input type="submit" value="{% trans "Upload file" %}" class="default" name="_send_file" />
+    </form>
 {% endblock content %}
