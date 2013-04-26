@@ -1,0 +1,23 @@
+{% extends "admin/base_site.html" %}
+{% load url from future %}
+{% load i18n %}
+
+{% block title %}{% trans "Import data" %} {{ block.super }}{% endblock title %}
+
+{% block breadcrumbs %}{% if not is_popup %}
+<div class="breadcrumbs">
+     <a href="{% url 'admin:index' %}">{% trans "Home" %}</a> &rsaquo;
+     <a href="#">APP_NAME</a> &rsaquo;
+     <a href="#">MODEL_NAME</a> &rsaquo;
+     {% trans "Import data" %}
+</div>
+{% endif %}{% endblock breadcrumbs %}
+
+{% block content %}
+
+<h1>{% trans "Import MODEL_NAME" %}</h1>
+<ul>
+    <li>To Do:</li>
+    <li>Upload CSV where fields match</li>
+</ul>
+{% endblock content %}
