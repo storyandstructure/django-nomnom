@@ -2,7 +2,7 @@
 {% load url from future %}
 {% load i18n %}
 
-{% block title %}{% trans "Export data" %} {{ block.super }}{% endblock %}
+{% block title %}{% trans "Export data" %} {{ block.super }}{% endblock title %}
 
 {% block breadcrumbs %}{% if not is_popup %}
 <div class="breadcrumbs">
@@ -11,8 +11,8 @@
      <a href="#">MODEL_NAME</a> &rsaquo;
      {% trans "Export data" %}
 </div>
-{% endif %}{% endblock %}
+{% endif %}{% endblock breadcrumbs %}
 
 {% block content %}
 <h1>{% trans "Export MODEL_NAME" %}</h1>
-{% endblock %}
+{% endblock content %}

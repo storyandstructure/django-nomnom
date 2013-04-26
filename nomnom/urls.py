@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     # from uploaded files to model;
     # /admin/APP_LABEL/MODEL_LABEL/export/, to export
     # data from a model;
+    #url(r'^admin/(?P<app_label>\w+)/(?P<model_name>\w+)/import/$', ImportPageView.as_view(app=app_label, mod=model_name,), name='import_data'),
     url(r'^import/', ImportPageView.as_view(), name='import_data'),
     url(r'^export/', ExportPageView.as_view(), name='export_data'),
     )

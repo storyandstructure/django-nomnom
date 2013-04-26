@@ -2,7 +2,7 @@
 {% load url from future %}
 {% load i18n %}
 
-{% block title %}{% trans "Import data" %} {{ block.super }}{% endblock %}
+{% block title %}{% trans "Import data" %} {{ block.super }}{% endblock title %}
 
 {% block breadcrumbs %}{% if not is_popup %}
 <div class="breadcrumbs">
@@ -11,8 +11,13 @@
      <a href="#">MODEL_NAME</a> &rsaquo;
      {% trans "Import data" %}
 </div>
-{% endif %}{% endblock %}
+{% endif %}{% endblock breadcrumbs %}
 
 {% block content %}
+
 <h1>{% trans "Import MODEL_NAME" %}</h1>
-{% endblock %}
+<ul>
+    <li>To Do:</li>
+    <li>Upload CSV where fields match</li>
+</ul>
+{% endblock content %}
