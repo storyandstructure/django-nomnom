@@ -2,4 +2,6 @@
 *.pot
 *.pyc
 *.swp
+.DS_Store
+.metadata
 local_settings.py
