@@ -19,4 +19,7 @@ class UtilsTest(TestCase):
 		
 		group1 = Group.objects.get(id=1)
 		self.assertEquals(group1.name, "Beatles")
+		
+		# TODO: upload a couple Sites via CSV in the same manor as above
+		# (to confirm that this solution works generically)
 	
