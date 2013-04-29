@@ -9,6 +9,16 @@ Developed with
  * Python 2.7.x
  * Django 1.4.x
 
+Installation & Setup
+--------------------
+After installation you need configure your project to recognizes the NomNom application adding 'nomnom' to your INSTALLED_APPS setting and setup the project URLConf like follow:
+
+        urlpatterns = patterns('',
+            # ...
+            (r'^admin/', include('nomnom.urls')), # put it before admin url patterns
+            (r'^admin/', include(admin.site.urls)),
+        )
+
 Settings
 --------
 
@@ -16,9 +26,3 @@ NomNom has the following settings available. You can set them in your project se
 
 NOMNOM_DATA_DIR
 Saved files will be stored on this directory. Default: None.
-
-Configure Export
-----------------
-from nomnom.actions import export_as_csv
-class MyAdmin(admin.ModelAdmin):
-    actions = [export_as_csv_action()]
