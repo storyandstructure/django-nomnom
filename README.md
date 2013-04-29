@@ -16,3 +16,9 @@ NomNom has the following settings available. You can set them in your project se
 
 NOMNOM_DATA_DIR
 Saved files will be stored on this directory. Default: None.
+
+Configure Export
+----------------
+from nomnom.actions import export_as_csv
+class MyAdmin(admin.ModelAdmin):
+    actions = [export_as_csv_action()]
