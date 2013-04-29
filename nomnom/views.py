@@ -15,7 +15,7 @@ class ImportPageView(FormView):
         # This method is called when valid form data has been POSTed.
         #form.send_email()
         isvalid = super(ImportPageView, self).form_valid(form)
-        handle_uploaded_file(self.request.FILES['file'])
+        handle_uploaded_file(self.request.FILES['file'], self.kwargs.get("app_label"), self.kwargs.get("model_name"))
         return isvalid
 
     def get_context_data(self, **kwargs):

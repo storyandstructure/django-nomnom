@@ -1,6 +1,9 @@
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models.loading import get_model
+
 from nomnom.settings import NOMNOM_DATA_DIR
 
+import csv
 
 def singularize(word):
     """Return the singular form of a word
@@ -26,13 +29,22 @@ def singularize(word):
     singleword = [f(word) for f in sing_rules if f(word) is not False][0]
     return singleword
 
-
-def handle_uploaded_file(file):
+def handle_uploaded_file(file, app_label, model_name_plural):
     if not NOMNOM_DATA_DIR:
         raise ImproperlyConfigured('You need to specify NOMNOM_DATA_DIR in '
                                    'your Django settings file.')
+
+    model_class = get_model(app_label, singularize(model_name_plural))
+
     if file:
         destination = open(NOMNOM_DATA_DIR + '/' + file.name, 'wb+')
         for chunk in file.chunks():
             destination.write(chunk)
         destination.close()
+        
+        reader = csv.reader(open(NOMNOM_DATA_DIR + '/' + file.name, 'r'))
+
+        for row in reader:
+	        if row[0] != 'id':
+				new_item = model_class(id=int(row[0]), name=row[1])
+				new_item.save()
