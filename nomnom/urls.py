@@ -8,6 +8,6 @@ urlpatterns = patterns('',
     #
     # APP_LABEL
     # MODEL_LABEL
-    url(r'^(?P<app_label>\w+)/(?P<model_name>\w+)/import/$', ImportPageView.as_view(), name='import_data'),
-    url(r'^(?P<app_label>\w+)/(?P<model_name>\w+)/export/$', ExportPageView.as_view(), name='export_data'),
+    url(r'^admin/(?P<app_label>\w+)/(?P<model_name>\w+)/import/$', ImportPageView.as_view(), name='import_data'),
+    url(r'^admin/(?P<app_label>\w+)/(?P<model_name>\w+)/export/$', ExportPageView.as_view(), name='export_data'),
 )
