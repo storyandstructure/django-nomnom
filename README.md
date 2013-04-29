@@ -8,3 +8,11 @@ Developed with
 
  * Python 2.7.x
  * Django 1.4.x
+
+Settings
+--------
+
+NomNom has the following settings available. You can set them in your project settings.py. If you don't set them it will assume the default values:
+
+NOMNOM_DATA_DIR
+Saved files will be stored on this directory. Default: None.

@@ -29,7 +29,9 @@
 
 {% block content %}
 <h1>{% trans "Import" %} {{ model|capfirst }}</h1>
-    <form enctype="multipart/form-data" method="post">{% csrf_token %}
-        <input type="submit" value="{% trans "Upload file" %}" class="default" name="_send_file" />
+    <form enctype="multipart/form-data" method="post" action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p><input type="submit" value="Upload" /></p>
     </form>
 {% endblock content %}
