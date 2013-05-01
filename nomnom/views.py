@@ -3,10 +3,16 @@ from nomnom.forms import ImportFileForm
 from django.core import urlresolvers
 from django.db.models.loading import get_model
 from nomnom.utils import handle_uploaded_file
+from nomnom.actions import export_as_csv
+
+
+def export_view(request, app_label, model_name, export_type):
+    modelToExport = get_model(app_label, model_name)
+    return export_as_csv(modelToExport, request, modelToExport.objects.all(), export_type)
 
 
 class ImportPageView(FormView):
-    template_name = "nomnom/import_data_form.html"
+    template_name = "nomnom/nomnom_form.html"
     form_class = ImportFileForm
 
     def get_success_url(self, **kwargs):

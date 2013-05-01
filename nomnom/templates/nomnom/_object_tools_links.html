@@ -1,32 +1,18 @@
 {% load url from future %}
 {% load i18n %}
-  <style>
-.object-tools a.importlink {
-        background: #999 url("{{ STATIC_URL }}nomnom/img/tooltag-import.gif") top right no-repeat;
-            padding-right: 28px;
-}
+<style>
+    .object-tools a.nomnomlink {
+            background: #999 url("{{ STATIC_URL }}nomnom/img/tooltag-nomnom.gif") top right no-repeat;
+                padding-right: 28px;
+    }
 
-.object-tools a.importlink:hover {
-        background: #5b80b2 url("{{ STATIC_URL }}nomnom/img/tooltag-import_over.gif") top right no-repeat;
-}
-.object-tools a.exportlink {
-        background: #999 url("{{ STATIC_URL }}nomnom/img/tooltag-export.gif") top right no-repeat;
-            padding-right: 28px;
-}
-
-.object-tools a.exportlink:hover {
-        background: #5b80b2 url("{{ STATIC_URL }}nomnom/img/tooltag-export_over.gif") top right no-repeat;
-}
- 
-  </style>
+    .object-tools a.nomnomlink:hover {
+            background: #5b80b2 url("{{ STATIC_URL }}nomnom/img/tooltag-nomnom_over.gif") top right no-repeat;
+    }
+</style>
 
 <li>
-	<a href="{% url 'import_data' app_label=cl.opts.app_label model_name=cl.opts.verbose_name %}" class="importlink">
-		{% blocktrans with cl.opts.verbose_name_plural as name %}Import {{ name }}{% endblocktrans %}
-	</a>
-</li>
-<li>
-	<a href="{% url 'export_data' app_label=cl.opts.app_label model_name=cl.opts.verbose_name %}" class="exportlink">
-		{% blocktrans with cl.opts.verbose_name_plural as name %}Export {{ name }}{% endblocktrans %}
+	<a href="{% url 'import_data' app_label=cl.opts.app_label model_name=cl.opts.verbose_name %}" class="nomnomlink">
+		{% blocktrans with cl.opts.verbose_name_plural as name %}NomNom {{ name }}{% endblocktrans %}
 	</a>
 </li>
