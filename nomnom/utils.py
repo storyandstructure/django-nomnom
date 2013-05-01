@@ -3,13 +3,12 @@ from django.db.models.loading import get_model
 
 from nomnom.settings import NOMNOM_DATA_DIR
 
-import csv
+import os, csv
 
 
 def handle_uploaded_file(file, app_label, model_name):
-    if not NOMNOM_DATA_DIR:
-        raise ImproperlyConfigured('You need to specify NOMNOM_DATA_DIR in '
-                                   'your Django settings file.')
+    if not os.path.exists(NOMNOM_DATA_DIR):
+        os.makedirs(NOMNOM_DATA_DIR)
     model_class = get_model(app_label, model_name)
 
     if file:
