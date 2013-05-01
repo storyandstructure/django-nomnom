@@ -1,7 +1,8 @@
 from django.views.generic import TemplateView, FormView
 from nomnom.forms import ImportFileForm
 from django.core import urlresolvers
-from nomnom.utils import singularize, handle_uploaded_file
+from django.db.models.loading import get_model
+from nomnom.utils import handle_uploaded_file
 
 
 class ImportPageView(FormView):
@@ -9,7 +10,7 @@ class ImportPageView(FormView):
     form_class = ImportFileForm
 
     def get_success_url(self, **kwargs):
-        return urlresolvers.reverse("admin:%s_%s_changelist" % (self.kwargs.get("app_label"), singularize(self.kwargs.get("model_name"))))
+        return urlresolvers.reverse("admin:%s_%s_changelist" % (self.kwargs.get("app_label"), self.kwargs.get("model_name")))
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
@@ -22,8 +23,9 @@ class ImportPageView(FormView):
         context = super(ImportPageView, self).get_context_data(**kwargs)
         context['app'] = self.kwargs.get("app_label")
         context['model'] = self.kwargs.get("model_name")
-        context['model_singular'] = singularize(self.kwargs.get("model_name"))
+        context['model_plural'] = get_model(self.kwargs.get("app_label"), self.kwargs.get("model_name"))._meta.verbose_name_plural
         return context
+
 
 class ExportPageView(TemplateView):
     template_name = "nomnom/export_data_form.html"

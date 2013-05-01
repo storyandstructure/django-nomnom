@@ -22,13 +22,13 @@
 <div class="breadcrumbs">
      <a href="{% url 'admin:index' %}">{% trans "Home" %}</a> &rsaquo;
      <a href="{% url 'admin:app_list' app_label=app %}">{{ app|capfirst|escape }}</a> &rsaquo;
-     <a href="#">{{ model|capfirst|escape }}</a> &rsaquo;
+     <a href="#">{{ model_plural|capfirst|escape }}</a> &rsaquo;
      {% trans "Import data" %}
 </div>
 {% endif %}{% endblock breadcrumbs %}
 
 {% block content %}
-<h1>{% trans "Import" %} {{ model|capfirst }}</h1>
+<h1>{% trans "Import" %} {{ model_plural|capfirst }}</h1>
     <form enctype="multipart/form-data" method="post" action="">
         {% csrf_token %}
         {{ form.as_p }}
