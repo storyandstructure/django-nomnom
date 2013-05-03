@@ -40,11 +40,12 @@ Settings
 
 NomNom has the following settings available. You can set them in your project settings.py. If you don't set them it will assume the default values:
 
-NOMNOM_DATA_DIR
-Saved files will be stored on this directory. Default: None.
+### NOMNOM\_DATA\_DIR
+Saved files will be stored on this directory.
+**Default:** settings.MEDIA_ROOT + 'nomnom'
 
 Configure Export
 ----------------
-from nomnom.actions import export_as_csv
+from nomnom.actions import export\_as\_csv
 class MyAdmin(admin.ModelAdmin):
-    actions = [export_as_csv_action()]
+    actions = [export\_as\_csv\_action()]

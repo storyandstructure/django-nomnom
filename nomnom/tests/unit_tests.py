@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import Group
 from django.contrib.sites.models import Site
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.contrib import messages
+from django.core.exceptions import ValidationError
 
 from nomnom.utils import handle_uploaded_file
 
@@ -56,6 +56,6 @@ class UtilsTest(TestCase):
 
         # No groups should have been added
 		self.assertEquals(Group.objects.all().count(), 0)
-
-		# User was redirected
-		self.assertEqual(type(output), 'ValidationError')
+		
+		# The function returns a ValidationError
+		self.assertEqual(type(output), ValidationError)
