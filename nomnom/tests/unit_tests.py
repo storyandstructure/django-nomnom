@@ -43,7 +43,7 @@ class UtilsTest(TestCase):
         # ID overwrite
 		group1 = Group.objects.get(id=1)
 		self.assertEquals(group1.name, "The Beatles")
-		
+
 	def test_abort_on_model_error(self):
 		"""
 		If any line in the CSV upload will throw an error,
@@ -52,18 +52,10 @@ class UtilsTest(TestCase):
 		dir_name = os.path.dirname(__file__)
 		f = open(os.path.join(dir_name, 'files/groups_broken.csv'), "r")
 		uploaded_file = SimpleUploadedFile('groups_broken.csv', f.read())
-		redirected_response = handle_uploaded_file(uploaded_file, 'auth', 'group')
+		output = handle_uploaded_file(uploaded_file, 'auth', 'group')
 
         # No groups should have been added
 		self.assertEquals(Group.objects.all().count(), 0)
-		
-		# User was redirected
-		self.assertEqual(redirected_response.status_code, 200)
-		
-		# Useful error message
-		# TODO: this probably doesn't work yet
-		messages = messages.get_messages(redirect_response)
-		self.fail("TODO: See that the rendered message looks like, so we can test that it exists.")
-		self.assertContains(messages, "There is an error in line 3 of your CSV.")
 
-		
+		# User was redirected
+		self.assertEqual(type(output), 'ValidationError')

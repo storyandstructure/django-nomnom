@@ -5,7 +5,7 @@ from django.contrib.admin.models import User
 
 
 class NomnomTest(WebTest):
-	
+
     fixtures = ['users.json',]
 
     def test_can_access_nomnom(self):
@@ -18,7 +18,7 @@ class NomnomTest(WebTest):
         # As an administrator, I can click the Import button so that I can
         # import files.
         user = self.app.get('/admin/auth/user/', user="admin")
-        assert 'Import Users' in user.click('Import users')
+        assert 'NomNom Users' in user.click('NomNom users')
 
         # As an administrator, I can click the Export button so that I can
         # export files.

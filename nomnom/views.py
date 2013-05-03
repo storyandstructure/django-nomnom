@@ -1,10 +1,12 @@
-from django.views.generic import TemplateView, FormView
+from django.views.generic import FormView
 from nomnom.forms import ImportFileForm
 from django.core import urlresolvers
 from django.db.models.loading import get_model
 from nomnom.utils import handle_uploaded_file
 from nomnom.actions import export_as_csv
-
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.contrib import messages
 
 def export_view(request, app_label, model_name, export_type):
     modelToExport = get_model(app_label, model_name)
@@ -22,7 +24,10 @@ class ImportPageView(FormView):
         # This method is called when valid form data has been POSTed.
         #form.send_email()
         isvalid = super(ImportPageView, self).form_valid(form)
-        handle_uploaded_file(self.request.FILES['file'], self.kwargs.get("app_label"), self.kwargs.get("model_name"))
+        fileup = handle_uploaded_file(self.request.FILES['file'], self.kwargs.get("app_label"), self.kwargs.get("model_name"))
+        if fileup:
+            messages.error(self.request, 'Dirty Data : ' + str(fileup))
+            return HttpResponseRedirect(reverse('import_data', kwargs=self.kwargs))
         return isvalid
 
     def get_context_data(self, **kwargs):
@@ -31,7 +36,3 @@ class ImportPageView(FormView):
         context['model'] = self.kwargs.get("model_name")
         context['model_plural'] = get_model(self.kwargs.get("app_label"), self.kwargs.get("model_name"))._meta.verbose_name_plural
         return context
-
-
-class ExportPageView(TemplateView):
-    template_name = "nomnom/export_data_form.html"
