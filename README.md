@@ -17,12 +17,22 @@ Currently you can install django-nomnom via pip like so:
 
 PyPI version coming soon :)
 
-After installation you need configure your project to recognizes the NomNom application adding 'nomnom' to your INSTALLED_APPS setting and setup the project URLConf like follow:
+After installation add 'nomnom' to your INSTALLED_APPS setting:
+
+	INSTALLED_APPS = (
+	    ...
+	    'nomnom', # before the admin app
+	    'django.contrib.admin',
+	    ...
+	)
+	
+Set up the project URLConf like so:
 
         urlpatterns = patterns('',
-            # ...
-            url(r'^admin/', include('nomnom.urls')), # put it before admin url patterns
+            ...
+            url(r'^admin/', include('nomnom.urls')), # before admin url patterns
             url(r'^admin/', include(admin.site.urls)),
+			...
         )
 
 Settings
