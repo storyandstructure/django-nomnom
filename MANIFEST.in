@@ -1,0 +1,7 @@
+include README.md
+include requirements.txt
+include LICENSE
+include MANIFEST.in
+include setup.py
+recursive-include docs *
+recursive-include nomnom *
