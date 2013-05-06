@@ -1,10 +1,11 @@
-from django.test import TestCase
-from django.contrib.auth.models import Group
+from django.test import TestCase, RequestFactory
+from django.contrib.auth.models import Group, Permission
 from django.contrib.sites.models import Site
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.exceptions import ValidationError
 
 from nomnom.utils import handle_uploaded_file
+from nomnom.actions import export_as_csv
 
 import os
 
@@ -59,3 +60,32 @@ class UtilsTest(TestCase):
 		
 		# The function returns a ValidationError
 		self.assertEqual(type(output), ValidationError)
+		
+	def test_export_as_csv(self):
+		"""
+		Download a CSV with all of the fields in a model. ForeignKeys are
+		ID's (for now), and ManyToManys are a quoted comma separated list
+		"""
+		permission1 = Permission.objects.get(id=1)
+		permission2 = Permission.objects.get(id=2)
+		group1 = Group(name="Group 1")
+		group1.save()
+		group1.permissions.add(permission1)
+		group1.permissions.add(permission2)
+		group2 = Group(name="Group 2")
+		group2.save()
+		group2.permissions.add(permission1)
+		
+		# test request
+		request_factory = RequestFactory()
+		req = request_factory.get('/admin/auth/user/')
+				
+		response = export_as_csv(modeladmin=group1.__class__, 
+								request=req, 
+								queryset=Group.objects.all(), 
+								export_type="D")
+		
+		expected_response = 'id,name,permissions\r\n1,Group 1,"1,2,"\r\n2,Group 2,"1,"'
+
+		self.assertContains(response, expected_response)	
+		

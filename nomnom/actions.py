@@ -1,7 +1,6 @@
 import csv
 from django.http import HttpResponse
 
-
 def export_as_csv(modeladmin, request, queryset, export_type):
     """
     Generic csv export admin action.
@@ -9,12 +8,9 @@ def export_as_csv(modeladmin, request, queryset, export_type):
     """
     opts = modeladmin._meta
     field_names = set([field.name for field in opts.fields])
-    print field_names
     fields = opts.fields
-    print fields
     if fields:
         fieldset = set(fields)
-        #field_names = field_names & fieldset
 
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % unicode(opts).replace('.', '_')
@@ -26,11 +22,7 @@ def export_as_csv(modeladmin, request, queryset, export_type):
     elif export_type == 'D':
         writer.writerow(list(field_names))
         for obj in queryset:
-            print obj
-            print field_names
-            print [unicode(getattr(obj, field)).encode("utf-8", "replace") for field in field_names]
             writer.writerow([unicode(getattr(obj, field)).encode("utf-8", "replace") for field in field_names])
-    print response
     return response
 
 

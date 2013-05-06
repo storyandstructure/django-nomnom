@@ -4,4 +4,5 @@
 *.swp
 .DS_Store
 .metadata
+.project
 local_settings.py
