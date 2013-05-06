@@ -13,6 +13,6 @@
 
 <li>
 	<a href="{% url 'import_data' app_label=cl.opts.app_label model_name=cl.opts.verbose_name|cut:' ' %}" class="nomnomlink">
-		{% blocktrans with cl.opts.verbose_name_plural as name %}NomNom {{ name }}{% endblocktrans %}
+		{% blocktrans with cl.opts.verbose_name_plural as name %}{% trans "Import" %} {{ name }}{% endblocktrans %}
 	</a>
 </li>

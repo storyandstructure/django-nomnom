@@ -144,8 +144,8 @@
     {% if has_add_permission %}
         <ul class="grp-object-tools">
             {% block object-tools-items %}
+				{% include "nomnom/_object_tools_links.html" %}
                 <li><a href="add/{% if is_popup %}?_popup=1{% endif %}" class="grp-add-link grp-state-focus">{% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}</a></li>
-								{% include "nomnom/object_tools_links.html" %}
             {% endblock %}
         </ul>
     {% endif %}
