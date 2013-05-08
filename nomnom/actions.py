@@ -11,6 +11,11 @@ def export_as_csv(modeladmin, request, queryset, export_type):
     fields = opts.fields
     if fields:
         fieldset = set(fields)
+        
+    m2m_field_names = set([field_tuple[0].name for field_tuple in opts.get_m2m_with_model()])
+    m2m_fields = set([field_tuple[0] for field_tuple in opts.get_m2m_with_model()])
+    if m2m_fields:
+        m2m_fieldset = set(m2m_fields)
 
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % unicode(opts).replace('.', '_')
@@ -18,11 +23,18 @@ def export_as_csv(modeladmin, request, queryset, export_type):
     writer = csv.writer(response)
     #if header:
     if export_type == 'T':
-        writer.writerow(list(field_names))
+        writer.writerow(list(field_names) + list(m2m_field_names))
     elif export_type == 'D':
-        writer.writerow(list(field_names))
+        writer.writerow(list(field_names) + list(m2m_field_names))
         for obj in queryset:
-            writer.writerow([unicode(getattr(obj, field)).encode("utf-8", "replace") for field in field_names])
+            m2m_field_output = []
+            # I'm not smart enough to do list comprehensions
+            for m2m_queryset in [getattr(obj, field).all() for field in m2m_field_names]:
+                m2m_field_ids = ""
+                for m2m_obj in m2m_queryset:
+                    m2m_field_ids += "%s," % m2m_obj.id
+                m2m_field_output.append(m2m_field_ids)
+            writer.writerow([unicode(getattr(obj, field)).encode("utf-8", "replace") for field in field_names] + m2m_field_output)
     return response
 
 
