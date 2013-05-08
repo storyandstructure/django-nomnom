@@ -43,6 +43,22 @@ class UtilsTest(TestCase):
 		group1_again = Group.objects.get(id=1)
 		self.assertEquals(group1_again.name, "The Beatles")
 
+	def test_handle_uploaded_file_m2m(self):
+		"""
+		Test that Nomnom properly handles file uploads
+		"""
+		dir_name = os.path.dirname(__file__)
+		f = open(os.path.join(dir_name, 'files/groups_with_perms.csv'), "r")
+		uploaded_file = SimpleUploadedFile('groups_with_perms.csv', f.read())
+		handle_uploaded_file(uploaded_file, 'auth', 'group')
+
+		group1 = Group.objects.get(id=1)
+		
+		perms = Permission.objects.filter(id__in=[1,2])
+				
+		self.assertQuerysetEqual(group1.permissions.all(), perms, ordered=False)
+		
+		
 	def test_abort_on_model_error(self):
 		"""
 		If any line in the CSV upload will throw an error,

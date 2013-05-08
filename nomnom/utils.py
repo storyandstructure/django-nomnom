@@ -22,6 +22,7 @@ def handle_uploaded_file(file, app_label, model_name):
             reader = csv.DictReader(f)
             for row in reader:
                 try:
+                    # TODO: could this be cleaner?
                     if row.get("id"):
                         new_item, created = model_class.objects.get_or_create(id=row.get("id"))
                         if created:
