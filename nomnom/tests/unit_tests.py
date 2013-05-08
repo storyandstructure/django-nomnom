@@ -20,7 +20,7 @@ class UtilsTest(TestCase):
 		uploaded_file = SimpleUploadedFile('groups.csv', f.read())
 		handle_uploaded_file(uploaded_file, 'auth', 'group')
 
-        # ID given
+        # ID not given
 		group1 = Group.objects.get(id=1)
 		self.assertEquals(group1.name, "Beatles")
 
@@ -28,22 +28,20 @@ class UtilsTest(TestCase):
 		# (to confirm that this solution works generically)
         # ID not given
 		f2 = open(os.path.join(dir_name, 'files/sites.csv'), "r")
-		uploaded_file = SimpleUploadedFile('sites.csv', f2.read())
-		handle_uploaded_file(uploaded_file, 'sites', 'site')
+		uploaded_file2 = SimpleUploadedFile('sites.csv', f2.read())
+		handle_uploaded_file(uploaded_file2, 'sites', 'site')
 
 		site1 = Site.objects.get(id=2)
 		self.assertEquals(site1.domain, "nomnom.example.com")
 
+		# overwrite some existing models with a new upload
 		f3 = open(os.path.join(dir_name, 'files/groups_over.csv'), "r")
-		uploaded_file = SimpleUploadedFile('groups.csv', f.read())
-		handle_uploaded_file(uploaded_file, 'auth', 'group')
-
-		uploaded_file = SimpleUploadedFile('groups_over.csv', f3.read())
-		handle_uploaded_file(uploaded_file, 'auth', 'group')
+		uploaded_file3 = SimpleUploadedFile('groups_over.csv', f3.read())
+		handle_uploaded_file(uploaded_file3, 'auth', 'group')
 
         # ID overwrite
-		group1 = Group.objects.get(id=1)
-		self.assertEquals(group1.name, "The Beatles")
+		group1_again = Group.objects.get(id=1)
+		self.assertEquals(group1_again.name, "The Beatles")
 
 	def test_abort_on_model_error(self):
 		"""

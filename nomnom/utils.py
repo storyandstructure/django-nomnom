@@ -22,7 +22,16 @@ def handle_uploaded_file(file, app_label, model_name):
             reader = csv.DictReader(f)
             for row in reader:
                 try:
-                    new_item = model_class(**row)
+                    if row.get("id"):
+                        new_item, created = model_class.objects.get_or_create(id=row.get("id"))
+                        if created:
+                            # overwrite new_item
+                            new_item = model_class(**row)
+                        else:
+                            for k,v in row.iteritems():
+                                setattr(new_item, k, v)
+                    else:
+                        new_item = model_class(**row)
                     new_item.full_clean()
                 except ValidationError as e:
                     # if the model is not clean send ValidationError
