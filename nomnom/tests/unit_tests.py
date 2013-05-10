@@ -136,21 +136,26 @@ class ModelsTest(TestCase):
 		loading.cache.loaded = False
 		call_command('syncdb', verbosity=0)
 		
-	def test_export_fk_as_id(self):
-		"""
-		CSVs should (by default) export FKs as IDs, not titles
-		"""
-		from nomnom.tests.models import Department, Instructor
+		from nomnom.tests.models import Department, Instructor, Course
 		department1 = Department(name="Intergalactic Exploration", code="INX")
 		department1.save()
 		instructor1 = Instructor(name="James Kirk", title="Capt.", department=department1)
 		instructor1.save()
+		course1 = Course(name="Photon-based Ballistics", ext_id="INX-324")
+		course1.save()
 		department2 = Department(name="Paranormal Investigation", code="PNV")
 		department2.save()
 		instructor2 = Instructor(name="Peter Venkman", title="Dr.", department=department2)
 		instructor2.save()
+		course2 = Course(name="Proton Pack Safety", ext_id="PNV-252")
+		course2.save()
+		course3 = Course(name="Spores, Molds, and Fungus", ext_id="PNV-112")
+		course3.save()
 		
-		# test request
+	def test_export_fk_as_id(self):
+		"""
+		CSVs should (by default) export FKs as IDs, not titles
+		"""
 		request_factory = RequestFactory()
 		req = request_factory.get('/admin/test/instructor/')
 				
@@ -161,5 +166,24 @@ class ModelsTest(TestCase):
 				
 		expected_response = 'department,title,id,name,courses\r\n1,Capt.,1,James Kirk,\r\n2,Dr.,2,Peter Venkman,'
 
-		self.assertContains(response, expected_response)	
+		self.assertContains(response, expected_response)
+		
+	def test_upload_m2m_as_unique(self):
+		"""
+		Allow unique-field values in M2M columns in the CSV upload
+		"""
+		dir_name = os.path.dirname(__file__)
+		f = open(os.path.join(dir_name, 'files/instructors.csv'), "r")
+		uploaded_file = SimpleUploadedFile('instructors.csv', f.read())
+		output = handle_uploaded_file(uploaded_file, 'tests', 'instructor')
+
+		from nomnom.tests.models import Instructor, Course
+
+        # 4 Instructors total
+ 		self.assertEquals(Instructor.objects.all().count(), 4)
+		
+		# Courses were properly attributed to Instructors
+		courses = Course.objects.get(id__in=[2,3])
+		spengler = Instructor.objects.get(id=3)
+		self.assertQuerysetEqual(spangler.courses.all(), [repr(c) for c in courses], ordered=False)
 		
