@@ -2,7 +2,11 @@ from django.test import TestCase, RequestFactory
 from django.contrib.auth.models import Group, Permission
 from django.contrib.sites.models import Site
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.exceptions import ValidationError
+
+# weird stuff for the models test
+from django.conf import settings
+from django.core.management import call_command
+from django.db.models import loading
 
 from nomnom.utils import handle_uploaded_file
 from nomnom.actions import export_as_csv
@@ -70,10 +74,25 @@ class UtilsTest(TestCase):
 		output = handle_uploaded_file(uploaded_file, 'auth', 'group')
 
         # No groups should have been added
-		self.assertEquals(Group.objects.all().count(), 0)
+ 		self.assertEquals(Group.objects.all().count(), 0)
 		
-		# The function returns a ValidationError
-		self.assertEqual(type(output), ValidationError)
+		# The function returns a ValueError
+		self.assertEqual(type(output), ValueError)
+		
+	def test_abort_on_m2m_does_not_exist(self):
+		"""
+		Quit early if an id for a m2m doesn't exist
+		"""
+		dir_name = os.path.dirname(__file__)
+		f = open(os.path.join(dir_name, 'files/groups_with_bad_perms.csv'), "r")
+		uploaded_file = SimpleUploadedFile('groups_with_bad_perms.csv', f.read())
+		output = handle_uploaded_file(uploaded_file, 'auth', 'group')
+
+        # No groups should have been added
+ 		self.assertEquals(Group.objects.all().count(), 0)
+		
+		# The function returns a ValueError
+		self.assertEqual(output, "The following IDs do not exist in the model for the 'permissions' field: 400, 300")
 		
 	def test_export_as_csv(self):
 		"""
@@ -103,3 +122,22 @@ class UtilsTest(TestCase):
 
 		self.assertContains(response, expected_response)	
 		
+class ModelsTest(TestCase):
+	"""
+	These tests require the existence of the models in nomnom/tests/models.py,
+	hence they are separated from the others. Technique described here:
+	http://stackoverflow.com/questions/502916/django-how-to-create-a-model-dynamically-just-for-testing
+	"""
+	
+	def setUp(self):
+		apps = list(settings.INSTALLED_APPS)
+		apps.append('nomnom.tests')
+		settings.INSTALLED_APPS = tuple(apps)
+		loading.cache.loaded = False
+		call_command('syncdb', verbosity=0)
+		
+	def test_setup(self):
+		from nomnom.tests.models import Person
+		person = Person(name="kevin", title="developer")
+		person.save()
+		self.assertEqual(1+1, 2)
