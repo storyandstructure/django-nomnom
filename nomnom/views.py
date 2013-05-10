@@ -2,12 +2,17 @@ from django.views.generic import FormView
 from nomnom.forms import ImportFileForm
 from django.core import urlresolvers
 from django.db.models.loading import get_model
-from nomnom.utils import handle_uploaded_file
-from nomnom.actions import export_as_csv
+from django.utils.decorators import method_decorator
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 
+from nomnom.utils import handle_uploaded_file
+from nomnom.actions import export_as_csv
+
+
+@staff_member_required
 def export_view(request, app_label, model_name, export_type):
     modelToExport = get_model(app_label, model_name)
     return export_as_csv(modelToExport, request, modelToExport.objects.all(), export_type)
@@ -16,6 +21,10 @@ def export_view(request, app_label, model_name, export_type):
 class ImportPageView(FormView):
     template_name = "nomnom/nomnom_form.html"
     form_class = ImportFileForm
+    
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ImportPageView, self).dispatch(*args, **kwargs)
 
     def get_success_url(self, **kwargs):
         return urlresolvers.reverse("admin:%s_%s_changelist" % (self.kwargs.get("app_label"), self.kwargs.get("model_name")))

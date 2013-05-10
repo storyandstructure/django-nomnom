@@ -14,11 +14,15 @@ class NomnomTest(WebTest):
         soup = BeautifulSoup('<html>%s' % response.html)
         title = soup.find('title')
         self.assertEqual('Log in | Django site admin', title.text)
+        
+        # As a non-staff user, I cannot access nomnom's import page
+        nomnom_auth_groups = self.app.get('/nomnom/auth/group/import/')
+        self.assertContains(nomnom_auth_groups, text='id="login-form"', status_code=200)
 
         # As an administrator, I can click the Import button so that I can
         # import files.
         user = self.app.get('/admin/auth/user/', user="admin")
-        assert 'NomNom Users' in user.click('NomNom users')
+        assert 'NomNom Users' in user.click('Import users')
 
         # As an administrator, I can click the Export button so that I can
         # export files.
