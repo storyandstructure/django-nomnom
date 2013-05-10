@@ -41,7 +41,7 @@ def handle_uploaded_file(file, app_label, model_name):
                             'ids'   : row[f[0].name]
                         })
                         
-                        # ad the ids to a list to check right before we commit
+                        # add the ids to a list to check right before we commit
                         for id in row[f[0].name].split(','):
                             if id: related_ids_to_test[f[0].related.parent_model].append(id)
                         

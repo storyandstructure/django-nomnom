@@ -136,8 +136,30 @@ class ModelsTest(TestCase):
 		loading.cache.loaded = False
 		call_command('syncdb', verbosity=0)
 		
-	def test_setup(self):
-		from nomnom.tests.models import Person
-		person = Person(name="kevin", title="developer")
-		person.save()
-		self.assertEqual(1+1, 2)
+	def test_export_fk_as_id(self):
+		"""
+		CSVs should (by default) export FKs as IDs, not titles
+		"""
+		from nomnom.tests.models import Department, Instructor
+		department1 = Department(name="Intergalactic Exploration", code="INX")
+		department1.save()
+		instructor1 = Instructor(name="James Kirk", title="Capt.", department=department1)
+		instructor1.save()
+		department2 = Department(name="Paranormal Investigation", code="PNV")
+		department2.save()
+		instructor2 = Instructor(name="Peter Venkman", title="Dr.", department=department2)
+		instructor2.save()
+		
+		# test request
+		request_factory = RequestFactory()
+		req = request_factory.get('/admin/test/instructor/')
+				
+		response = export_as_csv(modeladmin=instructor1.__class__, 
+								request=req, 
+								queryset=Instructor.objects.all(), 
+								export_type="D")
+				
+		expected_response = 'department,title,id,name,courses\r\n1,Capt.,1,James Kirk,\r\n2,Dr.,2,Peter Venkman,'
+
+		self.assertContains(response, expected_response)	
+		

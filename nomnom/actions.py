@@ -27,6 +27,7 @@ def export_as_csv(modeladmin, request, queryset, export_type):
     elif export_type == 'D':
         writer.writerow(list(field_names) + list(m2m_field_names))
         for obj in queryset:
+            
             m2m_field_output = []
             # I'm not smart enough to do list comprehensions
             for m2m_queryset in [getattr(obj, field).all() for field in m2m_field_names]:
@@ -34,7 +35,16 @@ def export_as_csv(modeladmin, request, queryset, export_type):
                 for m2m_obj in m2m_queryset:
                     m2m_field_ids += "%s," % m2m_obj.id
                 m2m_field_output.append(m2m_field_ids)
-            writer.writerow([unicode(getattr(obj, field)).encode("utf-8", "replace") for field in field_names] + m2m_field_output)
+            
+            other_field_output = []
+            for field in field_names:
+                try:
+                    # this is a ForeignKey field
+                    other_field_output.append(getattr(obj, field).id)
+                except AttributeError:
+                    other_field_output.append(unicode(getattr(obj, field)).encode("utf-8", "replace"))
+            
+            writer.writerow(other_field_output + m2m_field_output)
     return response
 
 
