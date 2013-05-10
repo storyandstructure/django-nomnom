@@ -62,6 +62,9 @@ def handle_uploaded_file(file, app_label, model_name):
                 #print m2m_field['name'], m2m_field['model'], m2m_field['ids']
                 for id in m2m_field['ids'].split(','):
                     if id:
-                        getattr(item[0], m2m_field['name']).add(m2m_field['model'].objects.get(id=int(id)))
+                        try:
+                            getattr(item[0], m2m_field['name']).add(m2m_field['model'].objects.get(id=int(id)))
+                        except m2m_field['model'].DoesNotExist:
+                            print 'does not exist'
             
         return None
