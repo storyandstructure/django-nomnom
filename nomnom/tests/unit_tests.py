@@ -56,7 +56,7 @@ class UtilsTest(TestCase):
 		
 		perms = Permission.objects.filter(id__in=[1,2])
 
-		self.assertQuerysetEqual(group1.permissions.all(), [repr(p) for p in perms], ordered=False)
+ 		self.assertQuerysetEqual(group1.permissions.all(), [repr(p) for p in perms], ordered=False)
 		
 		
 	def test_abort_on_model_error(self):
