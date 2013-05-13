@@ -28,8 +28,6 @@
 {% endif %}{% endblock breadcrumbs %}
 
 {% block content %}
-<h1>{% trans "NomNom" %} {{ model_plural|capfirst }}</h1>
-<br>
 <h1>{% trans "Import" %} {{ model_plural|capfirst }}</h1>
     <form enctype="multipart/form-data" method="post" action="">
         {% csrf_token %}

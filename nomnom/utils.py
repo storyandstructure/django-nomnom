@@ -51,6 +51,13 @@ def handle_uploaded_file(file, app_label, model_name):
                 # check for m2m fields
                 m2m_cols = []
                 for f in model_class._meta.get_m2m_with_model():
+
+                    # for now, ignore anything that's not an m2m (or FK)
+                    try:
+                        related = f[0].related
+                    except AttributeError:
+                        del row[f[0].name]
+                        break
                                         
                     if not related_values_to_test.get(f[0].related.parent_model):
                         related_values_to_test[f[0].related.parent_model] = []
