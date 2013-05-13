@@ -49,11 +49,26 @@ def handle_uploaded_file(file, app_label, model_name):
                         
                 # check for FKs
                 for k,v in row.iteritems():
+                    fk_lookup = None
                     try:
                         related_field = type(getattr(model_class, k)) # this must be a FK, as the M2M's were removed in the previous step
                         # TODO: how to we catch other types of lookup fields? getattr(model_class, k).field gives us the field type, FYI
                         fk_lookup = model_class._meta.get_field(k).rel.to.objects.get(id=v)
                         row[k] = fk_lookup
+                    except ValueError:
+                        fk_model = model_class._meta.get_field(k).rel.to
+                        for field in fk_model._meta.fields:
+                            if field.unique and field.name != 'id':
+                                try:
+                                    fk_lookup = fk_model.objects.get(**{field.name : v})
+                                    row[k] = fk_lookup
+                                    break
+                                except fk_model.DoesNotExist:
+                                    pass
+                        
+                        if not fk_lookup:
+                            return "%s did not return a valid %s." % (v, fk_model._meta.verbose_name)
+                        
                     except AttributeError:
                         pass
                             
