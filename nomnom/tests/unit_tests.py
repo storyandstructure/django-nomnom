@@ -92,7 +92,7 @@ class UtilsTest(TestCase):
  		self.assertEquals(Group.objects.all().count(), 0)
 		
 		# The function returns a ValueError
-		self.assertEqual(output, "The following values do not exist in the model for the 'permissions' field: 400, 300")
+		self.assertEqual(output, "The following values do not exist in the model for the 'permissions' field: 300, 400")
 		
 	def test_export_as_csv(self):
 		"""
@@ -212,26 +212,7 @@ class ModelsTest(TestCase):
  		self.assertEquals(Instructor.objects.all().count(), 4)
 		
 		# Courses were properly attributed to Instructors
-		courses = Course.objects.get(id__in=[2,3])
-		spengler = Instructor.objects.get(id=3)
-		self.assertQuerysetEqual(spangler.courses.all(), [repr(c) for c in courses], ordered=False)
-		
-	def test_upload_m2m_as_unique(self):
-		"""
-		Allow unique-field values in M2M columns in the CSV upload
-		"""
-		dir_name = os.path.dirname(__file__)
-		f = open(os.path.join(dir_name, 'files/instructors_m2m.csv'), "r")
-		uploaded_file = SimpleUploadedFile('instructors.csv', f.read())
-		output = handle_uploaded_file(uploaded_file, 'tests', 'instructor')
-
-		from nomnom.tests.models import Instructor, Course
-
-        # 4 Instructors total
- 		self.assertEquals(Instructor.objects.all().count(), 4)
-		
-		# Courses were properly attributed to Instructors
-		courses = Course.objects.get(id__in=[2,3])
-		spengler = Instructor.objects.get(id=3)
-		self.assertQuerysetEqual(spangler.courses.all(), [repr(c) for c in courses], ordered=False)
+		courses = Course.objects.filter(id__in=[2,3])
+		spengler = Instructor.objects.get(id=4)
+		self.assertQuerysetEqual(spengler.courses.all(), [repr(c) for c in courses], ordered=False)
 		

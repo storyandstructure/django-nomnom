@@ -5,7 +5,28 @@ from nomnom.settings import NOMNOM_DATA_DIR
 import os
 import csv
 
-import pdb
+def get_by_id_or_unique(model, value):
+    """
+    Try looking up the model by ID first. If that fails, 
+    iterate over all unique fields and search until you
+    get() a match.
+    
+    Return the item to save to the field, or an error.
+    """
+    lookup = None
+    try:
+        lookup = model.objects.get(id=int(value))
+    except model.DoesNotExist:
+        return lookup
+    except ValueError:
+        for field in model._meta.fields:
+            if field.unique and field.name != 'id':
+                try:
+                    lookup = model.objects.get(**{field.name : value})
+                    break
+                except model.DoesNotExist:
+                    pass
+    return lookup
 
 
 def handle_uploaded_file(file, app_label, model_name):
@@ -82,22 +103,27 @@ def handle_uploaded_file(file, app_label, model_name):
                         except model_class.DoesNotExist:
                             new_item = model_class(**row)
                     else:
-                        new_item = model_class(**row)
-                        
-                    # TODO: attach FK stuff
-                    
+                        new_item = model_class(**row)                    
                     new_item.full_clean()
                 except (ValidationError, ValueError) as e:
                     # if the model is not clean send ValidationError
-                    print e
                     return e
 
                 items.append((new_item, m2m_cols,))
                 
         for k,v in related_values_to_test.iteritems():
-            nonexistent_values = set([int(id) for id in v]).difference(set([obj.id for obj in k.objects.all()]))
+            ids_to_check = []
+            nonexistent_values = []
+            for item in v:
+                obj_to_check = get_by_id_or_unique(k,item)
+                if not obj_to_check:
+                    nonexistent_values.append(item)
+            # TODO: the following line efficiently checked for the existence of IDs supplied by the CSV. Now
+            # that we're allowing unique field values as lookups as well, we need to rethink this. Perhaps
+            # if we know the field we're looking up on we can do the same thing for it?
+            #nonexistent_values = set([int(id) for id in v]).difference(set([obj.id for obj in k.objects.all()]))
             if nonexistent_values:
-                return "The following values do not exist in the model for the '%s' field: %s" % (f[0].name, unicode(list(nonexistent_values)).strip('[]'))
+                return "The following values do not exist in the model for the '%s' field: %s" % (f[0].name, unicode(list(nonexistent_values)).strip("[]").replace("'", ""))
             
         
         for item in items:
@@ -107,6 +133,20 @@ def handle_uploaded_file(file, app_label, model_name):
                     if val:
                         try:
                             getattr(item[0], m2m_field['name']).add(m2m_field['model'].objects.get(id=int(val)))
+                        except ValueError:
+                            fk_model = m2m_field['model']
+                            for field in fk_model._meta.fields:
+                                if field.unique and field.name != 'id':
+                                    try:
+                                        fk_lookup = fk_model.objects.get(**{field.name : val})
+                                        getattr(item[0], m2m_field['name']).add(fk_lookup)
+                                        break
+                                    except fk_model.DoesNotExist:
+                                        pass
+                            
+                            if not fk_lookup:
+                                return "%s did not return a valid %s." % (val, fk_model._meta.verbose_name)
+
                         except m2m_field['model'].DoesNotExist as e:
                             return e
             
