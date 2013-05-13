@@ -5,3 +5,5 @@ include MANIFEST.in
 include setup.py
 recursive-include docs *
 recursive-include nomnom *
+recursive-include nomnom/static *
+recursive-include nomnom/templates *
