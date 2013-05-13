@@ -46,7 +46,17 @@ def handle_uploaded_file(file, app_label, model_name):
                             if val: related_values_to_test[f[0].related.parent_model].append(val)
                         
                         del row[f[0].name]
-                
+                        
+                # check for FKs
+                for k,v in row.iteritems():
+                    try:
+                        related_field = type(getattr(model_class, k)) # this must be a FK, as the M2M's were removed in the previous step
+                        # TODO: how to we catch other types of lookup fields? getattr(model_class, k).field gives us the field type, FYI
+                        fk_lookup = model_class._meta.get_field(k).rel.to.objects.get(id=v)
+                        row[k] = fk_lookup
+                    except AttributeError:
+                        pass
+                            
                 try:
                     # TODO: could this be cleaner?
                     if row.get("id"):
@@ -58,9 +68,13 @@ def handle_uploaded_file(file, app_label, model_name):
                             new_item = model_class(**row)
                     else:
                         new_item = model_class(**row)
+                        
+                    # TODO: attach FK stuff
+                    
                     new_item.full_clean()
                 except (ValidationError, ValueError) as e:
                     # if the model is not clean send ValidationError
+                    print e
                     return e
 
                 items.append((new_item, m2m_cols,))
@@ -74,10 +88,10 @@ def handle_uploaded_file(file, app_label, model_name):
         for item in items:
             item[0].save()
             for m2m_field in item[1]:
-                for id in m2m_field['values'].split(','):
-                    if id:
+                for val in m2m_field['values'].split(','):
+                    if val:
                         try:
-                            getattr(item[0], m2m_field['name']).add(m2m_field['model'].objects.get(id=int(id)))
+                            getattr(item[0], m2m_field['name']).add(m2m_field['model'].objects.get(id=int(val)))
                         except m2m_field['model'].DoesNotExist as e:
                             return e
             
