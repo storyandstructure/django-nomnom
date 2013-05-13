@@ -92,7 +92,7 @@ class UtilsTest(TestCase):
  		self.assertEquals(Group.objects.all().count(), 0)
 		
 		# The function returns a ValueError
-		self.assertEqual(output, "The following IDs do not exist in the model for the 'permissions' field: 400, 300")
+		self.assertEqual(output, "The following values do not exist in the model for the 'permissions' field: 400, 300")
 		
 	def test_export_as_csv(self):
 		"""
@@ -137,29 +137,30 @@ class ModelsTest(TestCase):
 		call_command('syncdb', verbosity=0)
 		
 		from nomnom.tests.models import Department, Instructor, Course
-		department1 = Department(name="Intergalactic Exploration", code="INX")
-		department1.save()
-		instructor1 = Instructor(name="James Kirk", title="Capt.", department=department1)
-		instructor1.save()
-		course1 = Course(name="Photon-based Ballistics", ext_id="INX-324")
-		course1.save()
-		department2 = Department(name="Paranormal Investigation", code="PNV")
-		department2.save()
-		instructor2 = Instructor(name="Peter Venkman", title="Dr.", department=department2)
-		instructor2.save()
-		course2 = Course(name="Proton Pack Safety", ext_id="PNV-252")
-		course2.save()
-		course3 = Course(name="Spores, Molds, and Fungus", ext_id="PNV-112")
-		course3.save()
+		self.department1 = Department(name="Intergalactic Exploration", code="INX")
+		self.department1.save()
+		self.instructor1 = Instructor(name="James Kirk", title="Capt.", department=self.department1)
+		self.instructor1.save()
+		self.course1 = Course(name="Photon-based Ballistics", ext_id="INX-324")
+		self.course1.save()
+		self.department2 = Department(name="Paranormal Investigation", code="PNV")
+		self.department2.save()
+		self.instructor2 = Instructor(name="Peter Venkman", title="Dr.", department=self.department2)
+		self.instructor2.save()
+		self.course2 = Course(name="Proton Pack Safety", ext_id="PNV-252")
+		self.course2.save()
+		self.course3 = Course(name="Spores, Molds, and Fungus", ext_id="PNV-112")
+		self.course3.save()
 		
 	def test_export_fk_as_id(self):
 		"""
 		CSVs should (by default) export FKs as IDs, not titles
 		"""
+		from nomnom.tests.models import Instructor
 		request_factory = RequestFactory()
 		req = request_factory.get('/admin/test/instructor/')
 				
-		response = export_as_csv(modeladmin=instructor1.__class__, 
+		response = export_as_csv(modeladmin=self.instructor1.__class__, 
 								request=req, 
 								queryset=Instructor.objects.all(), 
 								export_type="D")
