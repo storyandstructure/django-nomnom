@@ -54,7 +54,7 @@ class UtilsTest(TestCase):
 		dir_name = os.path.dirname(__file__)
 		f = open(os.path.join(dir_name, 'files/groups_with_perms.csv'), "r")
 		uploaded_file = SimpleUploadedFile('groups_with_perms.csv', f.read())
-		handle_uploaded_file(uploaded_file, 'auth', 'group')
+		output = handle_uploaded_file(uploaded_file, 'auth', 'group')
 
 		group1 = Group.objects.get(id=1)
 		
@@ -168,13 +168,60 @@ class ModelsTest(TestCase):
 		expected_response = 'department,title,id,name,courses\r\n1,Capt.,1,James Kirk,\r\n2,Dr.,2,Peter Venkman,'
 
 		self.assertContains(response, expected_response)
+
+	def test_upload_fk_as_id(self):
+		"""
+		Allow unique-field values in M2M columns in the CSV upload
+		"""
+		dir_name = os.path.dirname(__file__)
+		f = open(os.path.join(dir_name, 'files/instructors_fk.csv'), "r")
+		uploaded_file = SimpleUploadedFile('instructors_fk.csv', f.read())
+		output = handle_uploaded_file(uploaded_file, 'tests', 'instructor')
+
+		from nomnom.tests.models import Instructor
+
+ 		# 4 Instructors total
+ 		self.assertEquals(Instructor.objects.all().count(), 4)
+	
+	def test_upload_fk_as_unique(self):
+		"""
+		Allow unique-field values in M2M columns in the CSV upload
+		"""
+		dir_name = os.path.dirname(__file__)
+		f = open(os.path.join(dir_name, 'files/instructors_fk_unique.csv'), "r")
+		uploaded_file = SimpleUploadedFile('instructors_fk_unique.csv', f.read())
+		output = handle_uploaded_file(uploaded_file, 'tests', 'instructor')
+
+		from nomnom.tests.models import Instructor
+
+        # 4 Instructors total
+ 		self.assertEquals(Instructor.objects.all().count(), 4)
 		
 	def test_upload_m2m_as_unique(self):
 		"""
 		Allow unique-field values in M2M columns in the CSV upload
 		"""
 		dir_name = os.path.dirname(__file__)
-		f = open(os.path.join(dir_name, 'files/instructors.csv'), "r")
+		f = open(os.path.join(dir_name, 'files/instructors_m2m.csv'), "r")
+		uploaded_file = SimpleUploadedFile('instructors.csv', f.read())
+		output = handle_uploaded_file(uploaded_file, 'tests', 'instructor')
+
+		from nomnom.tests.models import Instructor, Course
+
+        # 4 Instructors total
+ 		self.assertEquals(Instructor.objects.all().count(), 4)
+		
+		# Courses were properly attributed to Instructors
+		courses = Course.objects.get(id__in=[2,3])
+		spengler = Instructor.objects.get(id=3)
+		self.assertQuerysetEqual(spangler.courses.all(), [repr(c) for c in courses], ordered=False)
+		
+	def test_upload_m2m_as_unique(self):
+		"""
+		Allow unique-field values in M2M columns in the CSV upload
+		"""
+		dir_name = os.path.dirname(__file__)
+		f = open(os.path.join(dir_name, 'files/instructors_m2m.csv'), "r")
 		uploaded_file = SimpleUploadedFile('instructors.csv', f.read())
 		output = handle_uploaded_file(uploaded_file, 'tests', 'instructor')
 
