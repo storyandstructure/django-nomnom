@@ -22,7 +22,7 @@
 <div class="breadcrumbs">
      <a href="{% url 'admin:index' %}">{% trans "Home" %}</a> &rsaquo;
      <a href="{% url 'admin:app_list' app_label=app %}">{{ app|capfirst|escape }}</a> &rsaquo;
-     <a href="#">{{ model_plural|capfirst|escape }}</a> &rsaquo;
+     <a href="{{ change_list_url }}">{{ model_plural|capfirst|escape }}</a> &rsaquo;
      {% trans "NomNom data" %}
 </div>
 {% endif %}{% endblock breadcrumbs %}

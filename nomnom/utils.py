@@ -77,6 +77,8 @@ def handle_uploaded_file(file, app_label, model_name):
                         
                 # check for FKs
                 for k,v in row.iteritems():
+                    if not v:
+                        continue
                     fk_lookup = None
                     try:
                         related_field = type(getattr(model_class, k)) # this must be a FK, as the M2M's were removed in the previous step

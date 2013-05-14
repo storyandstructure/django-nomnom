@@ -43,5 +43,6 @@ class ImportPageView(FormView):
         context = super(ImportPageView, self).get_context_data(**kwargs)
         context['app'] = self.kwargs.get("app_label")
         context['model'] = self.kwargs.get("model_name")
+        context['change_list_url'] = reverse("admin:%s_%s_changelist" % (self.kwargs.get("app_label"), self.kwargs.get("model_name")))
         context['model_plural'] = get_model(self.kwargs.get("app_label"), self.kwargs.get("model_name"))._meta.verbose_name_plural
         return context
