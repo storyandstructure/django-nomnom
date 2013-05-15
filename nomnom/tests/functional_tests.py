@@ -22,7 +22,7 @@ class NomnomTest(WebTest):
         # As an administrator, I can click the Import button so that I can
         # import files.
         user = self.app.get('/admin/auth/user/', user="admin")
-        assert 'NomNom Users' in user.click('Import users')
+        assert 'Import Users' in user.click('Import users')
 
         # As an administrator, I can click the Export button so that I can
         # export files.
