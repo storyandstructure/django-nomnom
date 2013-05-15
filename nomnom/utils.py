@@ -57,7 +57,7 @@ def handle_uploaded_file(file, app_label, model_name):
                         related = f[0].related
                     except AttributeError:
                         del row[f[0].name]
-                        break
+                        continue
                                         
                     if not related_values_to_test.get(f[0].related.parent_model):
                         related_values_to_test[f[0].related.parent_model] = []
