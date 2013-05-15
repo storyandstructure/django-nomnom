@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.db.models import loading
 
-from nomnom.utils import handle_uploaded_file, instantiate_from_row
+from nomnom.utils import *
 from nomnom.actions import export_as_csv
 
 import os
@@ -233,10 +233,30 @@ class ModelsTest(TestCase):
         Make sure instantiate_from_row() can handle floats (and blank floats)
         """
         from nomnom.tests.models import Department
-        row = {'name' : 'Potions', 'code' : 'WIZ-203', 'avg_gpa' : '3.25'}
+        row = {'name' : 'Magical Creatures', 'code' : 'WIZ-203', 'avg_gpa' : '3.25'}
         
         instantiate_from_row(Department, row).save()
         
         self.assertEquals(Department.objects.all().count(), 3)
         self.assertEquals(Department.objects.get(id=3).avg_gpa, 3.25)
+        
+    def test_get_unique_fields(self):
+        """
+        Confirm that we get back a list of unique=True fields names
+        """
+        from nomnom.tests.models import Department
+        self.assertListEqual(['id','code'], get_unique_field_names(Department))
+        
+    def test_lookup_by_unique(self):
+        """
+        If no ID is provided, but a value for a unique field is, attempt to update instead of insert
+        """
+        from nomnom.tests.models import Course
+        initial_count = Course.objects.all().count()
+        
+        row = {"name" : "Photon Torpedo Strategy", "ext_id" : "INX-324"}
+        instantiate_from_row(Course, row).save()
+        
+        self.assertEqual(initial_count, Course.objects.all().count())
+        self.assertEqual(Course.objects.get(id=1).name, "Photon Torpedo Strategy")
         

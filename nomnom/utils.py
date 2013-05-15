@@ -5,6 +5,16 @@ from nomnom.settings import NOMNOM_DATA_DIR
 import os
 import csv
 
+def get_unique_field_names(model):
+    """
+    Return all of the fields with "unique=True" for the model
+    """
+    fields = []
+    for field in model._meta.fields:
+        if field.unique:
+            fields.append(field.name)
+    return fields
+
 def get_by_id_or_unique(model, value):
     """
     Try looking up the model by ID first. If that fails, 
@@ -42,6 +52,14 @@ def instantiate_from_row(model_class, row):
             new_item = model_class()
     else:
         new_item = model_class()
+        # check if there is a unique field provided, and look up by it
+        provided_uniques = set([k for k in row.iterkeys()]) & set(get_unique_field_names(model_class))
+        for field_name in provided_uniques:
+            try:
+                new_item = model_class.objects.get(**{field_name : row[field_name]})
+                break
+            except model_class.DoesNotExist:
+                continue
         
     for field in model_class._meta.fields:
         if row.get(field.name):
