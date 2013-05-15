@@ -28,6 +28,29 @@ def get_by_id_or_unique(model, value):
                     pass
     return lookup
 
+def instantiate_from_row(model_class, row):
+    """
+    Accept a model class and row from a CSV.
+    
+    Return an unsaved instance of a model based on the row.
+    """
+    if row.get("id"):
+        try:
+            new_item = model_class.objects.get(id=row.get("id"))
+            del row['id']
+        except model_class.DoesNotExist:
+            new_item = model_class()
+    else:
+        new_item = model_class()
+        
+    for field in model_class._meta.fields:
+        if row.get(field.name):
+            setattr(new_item, field.name, row[field.name])
+            
+    new_item.full_clean()
+    
+    return new_item
+
 
 def handle_uploaded_file(file, app_label, model_name):
     items = []
@@ -103,17 +126,7 @@ def handle_uploaded_file(file, app_label, model_name):
                         pass
                             
                 try:
-                    # TODO: could this be cleaner?
-                    if row.get("id"):
-                        try:
-                            new_item = model_class.objects.get(id=row.get("id"))
-                            for k,v in row.iteritems():
-                                setattr(new_item, k, v)
-                        except model_class.DoesNotExist:
-                            new_item = model_class(**row)
-                    else:
-                        new_item = model_class(**row)                    
-                    new_item.full_clean()
+                    new_item = instantiate_from_row(model_class, row)
                 except (ValidationError, ValueError) as e:
                     # if the model is not clean send ValidationError
                     return e
