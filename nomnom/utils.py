@@ -178,7 +178,10 @@ def handle_uploaded_file(file, app_label, model_name):
             # if we know the field we're looking up on we can do the same thing for it?
             #nonexistent_values = set([int(id) for id in v]).difference(set([obj.id for obj in k.objects.all()]))
             if nonexistent_values:
-                return "The following values do not exist in the model for the '%s' field: %s" % (f[0].name, str(list(nonexistent_values)).strip("[]").replace("'", ""))
+                err_str = ''
+                for val in [str(value) for value in nonexistent_values]:
+                    err_str += val + ", "
+                return "The following values do not exist in the model for the '%s' field: %s" % (f[0].name, err_str)
             
         
         for item in items:

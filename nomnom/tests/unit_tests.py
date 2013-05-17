@@ -93,7 +93,7 @@ class UtilsTest(TestCase):
         self.assertEquals(Group.objects.all().count(), 0)
         
         # The function returns a ValueError
-        self.assertEqual(output, "The following values do not exist in the model for the 'permissions' field: 300, 400")
+        self.assertEqual(output, "The following values do not exist in the model for the 'permissions' field: 300, 400, ")
         
     def test_export_as_csv(self):
         """
@@ -133,7 +133,8 @@ class UtilsTest(TestCase):
         handle_uploaded_file(uploaded_file, 'auth', 'group')
 
         group1 = Group.objects.get(id=1)
-        self.assertEqual(Group.objects.get(id=1).name, u"Piñata")
+        thing_you_hit = "Piñata"
+        self.assertEqual(Group.objects.get(id=1).name, thing_you_hit.decode('latin-1'))
         
         
 class ModelsTest(TestCase):
