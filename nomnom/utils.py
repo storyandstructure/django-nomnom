@@ -70,6 +70,21 @@ def instantiate_from_row(model_class, row):
     return new_item
 
 
+# http://docs.python.org/2/library/csv.html#csv-examples
+def unicode_csv_reader(unicode_csv_data, dialect=csv.excel, **kwargs):
+    # csv.py doesn't do Unicode; encode temporarily as UTF-8:
+    csv_reader = csv.DictReader(utf_8_encoder(unicode_csv_data),
+                            dialect=dialect, **kwargs)
+    for row in csv_reader:
+        # decode UTF-8 back to Unicode, cell by cell:
+        yield dict([(key, unicode(cell, 'utf8')) for key, cell in row.iteritems()])
+
+
+def utf_8_encoder(unicode_csv_data):
+    for line in unicode_csv_data:
+        yield line.decode('latin-1').encode('utf-8')
+
+
 def handle_uploaded_file(file, app_label, model_name):
     items = []
     if not os.path.exists(NOMNOM_DATA_DIR):
@@ -86,7 +101,7 @@ def handle_uploaded_file(file, app_label, model_name):
         related_values_to_test = {}
 
         with open(NOMNOM_DATA_DIR + '/' + file.name, 'rb') as f:
-            reader = csv.DictReader(f)
+            reader = unicode_csv_reader(f)
             for row in reader:
                 
                 # check for m2m fields
@@ -163,7 +178,7 @@ def handle_uploaded_file(file, app_label, model_name):
             # if we know the field we're looking up on we can do the same thing for it?
             #nonexistent_values = set([int(id) for id in v]).difference(set([obj.id for obj in k.objects.all()]))
             if nonexistent_values:
-                return "The following values do not exist in the model for the '%s' field: %s" % (f[0].name, unicode(list(nonexistent_values)).strip("[]").replace("'", ""))
+                return "The following values do not exist in the model for the '%s' field: %s" % (f[0].name, str(list(nonexistent_values)).strip("[]").replace("'", ""))
             
         
         for item in items:
