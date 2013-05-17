@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.test import TestCase, RequestFactory
 from django.contrib.auth.models import Group, Permission
 from django.contrib.sites.models import Site
@@ -120,7 +121,20 @@ class UtilsTest(TestCase):
         
         expected_response = 'id,name,permissions\r\n1,Group 1,"1,2,"\r\n2,Group 2,"1,"'
 
-        self.assertContains(response, expected_response)    
+        self.assertContains(response, expected_response)
+        
+    def test_unicode_support(self):
+        """
+        Special characters should work.
+        """
+        dir_name = os.path.dirname(__file__)
+        f = open(os.path.join(dir_name, 'files/groups_unicode.csv'), "r")
+        uploaded_file = SimpleUploadedFile('groups_unicode.csv', f.read())
+        handle_uploaded_file(uploaded_file, 'auth', 'group')
+
+        group1 = Group.objects.get(id=1)
+        self.assertEqual(Group.objects.get(id=1).name, u"Piñata")
+        
         
 class ModelsTest(TestCase):
     """
