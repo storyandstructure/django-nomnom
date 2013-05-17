@@ -1,3 +1,9 @@
+0.1.4 (2013-05-17)
+------------------
+
+ - marked some new translations (@myktra)
+ - minor doc fixes
+
 0.1.3a (2013-05-17)
 -------------------
 

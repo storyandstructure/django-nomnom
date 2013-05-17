@@ -11,11 +11,12 @@ Developed with
 
 Installation & Setup
 --------------------
+
 Currently you can install django-nomnom via pip like so:
 
     pip install -e git+https://github.com/storyandstructure/django-nomnom.git#egg=nomnom
 
-PyPI version coming soon :)
+PyPI version is coming soon :)
 
 After installation add 'nomnom' to your INSTALLED_APPS setting:
 
@@ -38,14 +39,16 @@ Set up the project URLConf like so:
 Settings
 --------
 
-NomNom has the following settings available. You can set them in your project settings.py. If you don't set them it will assume the default values:
+NomNom has the following settings available. You can set them in your project `settings.py`. If you don't set them it will assume the default values:
 
 ### NOMNOM\_DATA\_DIR
 Saved files will be stored on this directory.
-**Default:** settings.MEDIA_ROOT + 'nomnom'
+
+**Default:** `settings.MEDIA_ROOT + 'nomnom'`
 
 Configure Export
 ----------------
-from nomnom.actions import export\_as\_csv
-class MyAdmin(admin.ModelAdmin):
-    actions = [export\_as\_csv\_action()]
+
+    from nomnom.actions import export_as_csv
+    class MyAdmin(admin.ModelAdmin):
+        actions = [export_as_csv_action()]
