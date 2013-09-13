@@ -12,11 +12,7 @@ Developed with
 Installation & Setup
 --------------------
 
-Currently you can install django-nomnom via pip like so:
-
-    pip install -e git+https://github.com/storyandstructure/django-nomnom.git#egg=nomnom
-
-PyPI version is coming soon :)
+    pip install django-nomnom
 
 After installation add 'nomnom' to your INSTALLED_APPS setting:
 
