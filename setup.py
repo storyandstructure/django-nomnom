@@ -8,7 +8,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 VERSION = __import__('nomnom').get_version()
         
 CLASSIFIERS = [
-    'Development Status :: 2 - Pre-Alpha',
+    'Development Status :: 3 - Alpha',
     'Environment :: Web Environment',
     'Framework :: Django',
     'Intended Audience :: Developers',
