@@ -35,7 +35,9 @@ class ImportPageView(FormView):
         isvalid = super(ImportPageView, self).form_valid(form)
         fileup = handle_uploaded_file(self.request.FILES['file'], self.kwargs.get("app_label"), self.kwargs.get("model_name"))
         if fileup:
-            messages.error(self.request, 'Dirty Data : ' + str(fileup))
+            for key, errors in fileup.message_dict.iteritems():
+                for error in errors:
+                    messages.error(self.request, "Error on field '%s': %s" % (key, error))
             return HttpResponseRedirect(reverse('import_data', kwargs=self.kwargs))
         return isvalid
 
