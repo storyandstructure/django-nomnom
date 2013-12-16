@@ -188,11 +188,11 @@ def handle_uploaded_file(file, app_label, model_name):
                     err_str += val + ", "
                 return "The following values do not exist in the model for the '%s' field: %s" % (f[0].name, err_str)
             
+
+        dupes = []
         
         for item in items:
-            
-            dupes = []
-            
+                        
             try:
                 item[0].save()
             except IntegrityError:
@@ -219,15 +219,16 @@ def handle_uploaded_file(file, app_label, model_name):
 
                         except m2m_field['model'].DoesNotExist as e:
                             return e
-                            
+
         if len(dupes) > 0:
-            message = "The following items would have duplicated unique field, and were skipped after the first instance: "
+            message = "Creation of the following items would have duplicated a unique field, and were therefore skipped after the first instance: "
             
             i = 1
             for dupe in dupes:
-                message += dupe.unicode()
-                if i < len(dupes):
+                message += dupe.__unicode__()
+                if i <= len(dupes):
                     message += u', '
                 i += 1
-            
+        
+        # TODO:  full report of import?
         return message
