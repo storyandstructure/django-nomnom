@@ -50,6 +50,7 @@ def instantiate_from_row(model_class, row):
             del row['id']
         except model_class.DoesNotExist:
             new_item = model_class()
+
     else:
         new_item = model_class()
         # check if there is a unique field provided, and look up by it
@@ -100,7 +101,7 @@ def handle_uploaded_file(file, app_label, model_name):
         # dict of related model values, for validation before we make any commits
         related_values_to_test = {}
 
-        with open(NOMNOM_DATA_DIR + '/' + file.name, 'rb') as f:
+        with open(NOMNOM_DATA_DIR + '/' + file.name, 'rU') as f:
             reader = unicode_csv_reader(f)
             for row in reader:
                 

@@ -35,7 +35,7 @@ class ImportPageView(FormView):
         isvalid = super(ImportPageView, self).form_valid(form)
         fileup = handle_uploaded_file(self.request.FILES['file'], self.kwargs.get("app_label"), self.kwargs.get("model_name"))
         if fileup:
-            if type(fileup) == type('a string'):
+            if type(fileup) == type('a string') or type(fileup) == type(u'some unicode'):
                 messages.error(self.request, 'Error : %s' % (fileup))
             else:
                 for key, errors in fileup.message_dict.iteritems():
