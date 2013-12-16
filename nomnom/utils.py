@@ -1,4 +1,5 @@
 from django.db.models.loading import get_model
+from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from nomnom.settings import NOMNOM_DATA_DIR
 
@@ -87,6 +88,9 @@ def utf_8_encoder(unicode_csv_data):
 
 
 def handle_uploaded_file(file, app_label, model_name):
+    
+    message = None
+    
     items = []
     if not os.path.exists(NOMNOM_DATA_DIR):
         os.makedirs(NOMNOM_DATA_DIR)
@@ -164,7 +168,7 @@ def handle_uploaded_file(file, app_label, model_name):
                 except (ValidationError, ValueError) as e:
                     # if the model is not clean send ValidationError
                     return e
-
+                
                 items.append((new_item, m2m_cols,))
                 
         for k,v in related_values_to_test.iteritems():
@@ -186,7 +190,14 @@ def handle_uploaded_file(file, app_label, model_name):
             
         
         for item in items:
-            item[0].save()
+            
+            dupes = []
+            
+            try:
+                item[0].save()
+            except IntegrityError:
+                dupes.append(item[0])
+                
             for m2m_field in item[1]:
                 for val in m2m_field['values'].split(','):
                     if val:
@@ -208,5 +219,15 @@ def handle_uploaded_file(file, app_label, model_name):
 
                         except m2m_field['model'].DoesNotExist as e:
                             return e
+                            
+        if len(dupes) > 0:
+            message = "The following items would have duplicated unique field, and were skipped after the first instance: "
             
-        return None
+            i = 1
+            for dupe in dupes:
+                message += dupe.unicode()
+                if i < len(dupes):
+                    message += u', '
+                i += 1
+            
+        return message
