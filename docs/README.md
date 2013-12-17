@@ -8,8 +8,6 @@ We've included our own `admin/change_list.html`, which includes `nomnom/object_t
  * copy `<env>/lib/pythonX.Y/site-packages/nomnom/templates/admin/grappelli_change_list.html` to a template directory in your project or app (i.e. `~/myproject/myapp/templates/admin/grappelli_change_list.html`)
  * rename `grappelli_change_list.html` to `change_list.html`
 
-We'll eventually come up with a brilliant way to only swap out only `{% block object-tools-items %}`, but for now this lets us move forward.
-
 
 Tested with
 -----------
