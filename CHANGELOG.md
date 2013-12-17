@@ -1,3 +1,9 @@
+0.1.5 (2013-12-17)
+------------------
+
+ - Skip any duplicated unique field rows on import
+ - Better post-import display
+
 0.1.4 (2013-05-17)
 ------------------
 
